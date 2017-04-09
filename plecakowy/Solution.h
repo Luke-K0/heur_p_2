@@ -1,25 +1,30 @@
 #pragma once
 #include <vector>
+#include <iostream>
 #include "Item.h"
 
-const int carryCapacity = 50;
+const int carryCapacity = 30;
 
 class Solution
 {
 public:
 	Solution(std::vector<Item*>* items, bool random);
-	Solution(std::vector<Item*>* items, std::vector<bool> solution);
+	Solution(Solution* solution);
 	~Solution();
 	void calculateWeight();
 	void calculateValue();
 	int getWeight() { return weight; }
 	int getValue() { return value; }
+	void Mutuj();
+	int getFitness();
+	int getLength();
+	std::vector<bool> solution;
+	std::vector<Item*>* items;
 
 private:
 	int weight;
 	int value;
-	std::vector<Item*>* items;
-	std::vector<bool> solution;	
+	int fitness;
 	std::vector<bool> generateRandom();
 };
 

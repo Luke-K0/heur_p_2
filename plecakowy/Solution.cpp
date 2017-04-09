@@ -17,10 +17,10 @@ Solution::Solution(std::vector<Item*>* items, bool random)
 	calculateWeight();
 }
 
-Solution::Solution(std::vector<Item*>* items, std::vector<bool> solution)
+Solution::Solution(Solution* solution)
 {
-	this->items = items;
-	this->solution = solution;
+	this->items = solution->items;
+	this->solution = std::vector<bool>(items->size());
 	
 	calculateValue();
 	calculateWeight();
@@ -66,6 +66,7 @@ void Solution::calculateWeight()
 	}
 
 	weight = totalWeight;
+	fitness = weight > carryCapacity ? 0 : value;
 }
 
 void Solution::calculateValue()
@@ -82,4 +83,37 @@ void Solution::calculateValue()
 	}
 
 	value = totalValue;
+	fitness = weight > carryCapacity ? 0 : value;
+}
+
+void Solution::Mutuj()
+{
+	//std::cout << "Mutuje!" << std::endl;
+
+	std::vector<int> trueIndexes;
+	std::vector<int> falseIndexes;
+
+	for (int i = 0; i < items->size(); i++)
+	{
+		solution[i] ? trueIndexes.push_back(i) : falseIndexes.push_back(i);
+	}
+
+	int trueIndex = rand() % trueIndexes.size();
+	int falseIndex = rand() % falseIndexes.size();
+
+	solution[trueIndex] = false;
+	solution[falseIndex] = true;
+
+	calculateValue();
+	calculateWeight();
+}
+
+int Solution::getFitness()
+{
+	return fitness;
+}
+
+int Solution::getLength()
+{
+	return solution.size();
 }
