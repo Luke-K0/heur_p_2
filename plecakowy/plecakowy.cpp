@@ -9,20 +9,17 @@
 #include <ctime>
 #include <algorithm>
 #include "Item.h"
+#include "Solution.h"
 
-
-const int carryCapacity = 50;
 const int itemCount = 30;
 const int maxValue = 10;
 const int maxWeight = 10;
 const int populationSize = 200;
 
-std::vector<bool>* generateRandom(std::vector<Item*>* items);
-std::pair<int, int> getTotalWeightValue(std::vector<Item*>* items, std::vector<bool>* solution);
+bool compareSolutions(Solution* a, Solution* b);
 
 int main()
 {
-	std::srand(std::time(0));
 	std::vector<Item*> items(itemCount);
 	for (unsigned int i = 0; i < itemCount; i++)
 	{
@@ -30,40 +27,26 @@ int main()
 		int weight = rand() % maxWeight + 1;
 		items[i] = new Item(weight, value);
 	}
-		
-	std::vector<std::vector<bool>*> currentGeneration(populationSize);
+	
+	std::srand(std::time(0));
+	std::vector<Solution*> currentGeneration(populationSize);
 	for (int i = 0; i < populationSize; i++)
 	{
-		currentGeneration[i] = generateRandom(&items);
+		currentGeneration[i] = new Solution(&items, true);
 	}
 	
-	std::sort(currentGeneration.begin(), currentGeneration.end());
+	std::sort(currentGeneration.begin(), currentGeneration.end(), compareSolutions);
 	
 	//auto weightValue = getTotalWeightValue(&items, solution);
 	//std::cout << "Weight: " << weightValue.first << " Value: " << weightValue.second << "\n";
+	std::cout << "press any key";
 	getchar();
     return 0;
 }
 
-std::vector<bool>* generateRandom(std::vector<Item*>* items)
+bool compareSolutions(Solution* a, Solution* b)
 {
-	std::vector<bool>* solution = new std::vector<bool>(items->size());
-	bool stop = false;
-
-	while (!stop)
-	{
-		int index = rand() % (int)items->size();
-		(*solution)[index] = true;
-
-		int totalWeight = getTotalWeightValue(items, solution).first;
-		if (totalWeight > carryCapacity)
-		{
-			(*solution)[index] = false;
-			stop = true;
-		}
-	}
-
-	return solution;
+	return a->getValue() > b->getValue();
 }
 
 std::pair<int, int> getTotalWeightValue(std::vector<Item*>* items, std::vector<bool>* solution)
